@@ -17,13 +17,16 @@ namespace DataFlareServer.Controllers
         [HttpPost]
         public Flare Post(Flare flare)
         {
-            FlareStorage.Add(flare);
+            if (!FlareStorage.Add(flare))
+            {
+                throw new Exception("Failed to add flare to storage.");
+            }
             return flare;
         }
 
 
         // GET: api/<FlareController>/tag
-        [HttpGet("tag")]
+        [HttpGet("tag/{tag}")]
         public IEnumerable<Flare> Get(string tag)
         {
             return FlareStorage.GetTag(tag);
@@ -35,10 +38,12 @@ namespace DataFlareServer.Controllers
         {
             return FlareStorage.Get(guid);
         }
-        [HttpGet("zzz")]
-        public async Task<List<Flare>> ZZZ(string tag)
+
+        // GET api/<FlareController>/5
+        [HttpGet("shortcode/{shortCode}")]
+        public Flare? GetShortCode(int shortCode)
         {
-            return await Flare.GetTag("https://localhost:44308/api/Flare", tag);
+            return FlareStorage.GetShortCode(shortCode);
         }
     }
 }

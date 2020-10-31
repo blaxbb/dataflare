@@ -10,35 +10,70 @@ namespace DataFlareServer
     public static class FlareStorage
     {
         static Dictionary<string, List<Flare>> FlareCollection;
+        static Random rand;
+        const uint SHORT_CODE_LENGTH = 4;
         static FlareStorage()
         {
             FlareCollection = new Dictionary<string, List<Flare>>();
+            rand = new Random();
+            if(SHORT_CODE_LENGTH == 0)
+            {
+                throw new Exception("SHORT_CODE_LENGTH must be greater than zero.");
+            }
         }
 
-        public static void Add(Flare flare)
+        public static bool Add(Flare flare)
         {
             if(string.IsNullOrWhiteSpace(flare.Tag))
             {
                 Debug.WriteLine("Trying to add flare with missing tag!");
-                return;
+                return false;
             }
 
             flare.Guid = Guid.NewGuid();
             flare.Created = DateTime.Now;
 
-            if (FlareCollection.ContainsKey(flare.Tag))
+            if (!FlareCollection.ContainsKey(flare.Tag))
             {
-                FlareCollection[flare.Tag].Add(flare);
+                FlareCollection[flare.Tag] = new List<Flare>();
             }
-            else
+            int attempts = 0;
+            while (flare.ShortCode <= 0 && attempts < 10)
             {
-                FlareCollection[flare.Tag] = new List<Flare>()
+                //For 4 digit shortcode, produces 1000-9999
+                var check = rand.Next((int)Math.Pow(10, SHORT_CODE_LENGTH - 1), (int)Math.Pow(10, SHORT_CODE_LENGTH));
+                if(FlareCollection[flare.Tag].Any(f => f.ShortCode == check))
                 {
-                    flare
-                };
+                    attempts++;
+                }
+                else
+                {
+                    flare.ShortCode = check;
+                }
             }
+
+            if(flare.ShortCode <= 0)
+            {
+                return false;
+            }
+
+            FlareCollection[flare.Tag].Add(flare);
+            return true;
         }
 
+        public static Flare GetShortCode(int shortCode)
+        {
+            foreach(var list in FlareCollection.Values)
+            {
+                var found = list.FirstOrDefault(f => f.ShortCode == shortCode);
+                if(found != null)
+                {
+                    return found;
+                }
+            }
+
+            return null;
+        }
         public static List<Flare> GetTag(string tag)
         {
             return FlareCollection.ContainsKey(tag) ? FlareCollection[tag] : new List<Flare>();

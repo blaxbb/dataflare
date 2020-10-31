@@ -12,14 +12,19 @@ namespace DataFlareClient
     public class Flare
     {
         public Guid Guid { get; set; }
+        public int ShortCode { get; set; }
         public string Tag { get; set; }
         public string Title { get; set; }
         public string Data { get; set; }
         public DateTime Created { get; set; }
 
-        public Flare(Guid guid, string data)
+        public Flare()
         {
-            Guid = guid;
+
+        }
+
+        public Flare(string data)
+        {
             Data = data;
         }
 
@@ -39,6 +44,7 @@ namespace DataFlareClient
                         var flare = JsonSerializer.Deserialize<Flare>(json);
                         Created = flare.Created;
                         Guid = flare.Guid;
+                        ShortCode = flare.ShortCode;
                         return true;
                     }
                 }
@@ -95,6 +101,29 @@ namespace DataFlareClient
             {
                 System.Diagnostics.Debug.WriteLine(e.ToString());
                 return new List<Flare>();
+            }
+        }
+
+        public static async Task<Flare> GetShortCode(string baseUrl, string shortCode)
+        {
+            try
+            {
+                using (var handler = new HttpClientHandler())
+                {
+                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+                    handler.ServerCertificateCustomValidationCallback = (request, cert, chain, policyErrors) => { return true; };
+                    using (var client = new HttpClient(handler))
+                    {
+                        var result = await client.GetAsync($"{baseUrl}/shortcode/{shortCode}");
+                        var json = await result.Content.ReadAsStringAsync();
+                        return JsonSerializer.Deserialize<Flare>(json);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                System.Diagnostics.Debug.WriteLine(e.ToString());
+                return null;
             }
         }
     }
