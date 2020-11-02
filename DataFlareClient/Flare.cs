@@ -32,21 +32,16 @@ namespace DataFlareClient
         {
             try
             {
-                using (var handler = new HttpClientHandler())
+                using (var client = new HttpClient())
                 {
-                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                    handler.ServerCertificateCustomValidationCallback = (request, cert, chain, policyErrors) => { return true; };
-                    using (var client = new HttpClient(handler))
-                    {
-                        var content = new StringContent(JsonSerializer.Serialize(this), System.Text.Encoding.UTF8, "application/json");
-                        var result = await client.PostAsync(baseUrl, content);
-                        var json = await result.Content.ReadAsStringAsync();
-                        var flare = JsonSerializer.Deserialize<Flare>(json);
-                        Created = flare.Created;
-                        Guid = flare.Guid;
-                        ShortCode = flare.ShortCode;
-                        return true;
-                    }
+                    var content = new StringContent(JsonSerializer.Serialize(this), System.Text.Encoding.UTF8, "application/json");
+                    var result = await client.PostAsync(baseUrl, content);
+                    var json = await result.Content.ReadAsStringAsync();
+                    var flare = JsonSerializer.Deserialize<Flare>(json);
+                    Created = flare.Created;
+                    Guid = flare.Guid;
+                    ShortCode = flare.ShortCode;
+                    return true;
                 }
             }
             catch (Exception e)
@@ -61,17 +56,12 @@ namespace DataFlareClient
         {
             try
             {
-                using (var handler = new HttpClientHandler())
+                using (var client = new HttpClient())
                 {
-                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                    handler.ServerCertificateCustomValidationCallback = (request, cert, chain, policyErrors) => { return true; };
-                    using (var client = new HttpClient(handler))
-                    {
-                        var result = await client.GetAsync($"{baseUrl}?guid={guid.ToString()}");
-                        var json = await result.Content.ReadAsStringAsync();
-                        var flare = JsonSerializer.Deserialize<Flare>(json);
-                        return flare;
-                    }
+                    var result = await client.GetAsync($"{baseUrl}?guid={guid.ToString()}");
+                    var json = await result.Content.ReadAsStringAsync();
+                    var flare = JsonSerializer.Deserialize<Flare>(json);
+                    return flare;
                 }
             }
             catch (Exception e)
@@ -84,17 +74,12 @@ namespace DataFlareClient
         {
             try
             {
-                using (var handler = new HttpClientHandler())
+                using (var client = new HttpClient())
                 {
-                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                    handler.ServerCertificateCustomValidationCallback = (request, cert, chain, policyErrors) => { return true; };
-                    using (var client = new HttpClient(handler))
-                    {
-                        var result = await client.GetAsync($"{baseUrl}/tag?tag={tag}");
-                        var json = await result.Content.ReadAsStringAsync();
-                        var flares = JsonSerializer.Deserialize<List<Flare>>(json);
-                        return flares;
-                    }
+                    var result = await client.GetAsync($"{baseUrl}/tag?tag={tag}");
+                    var json = await result.Content.ReadAsStringAsync();
+                    var flares = JsonSerializer.Deserialize<List<Flare>>(json);
+                    return flares;
                 }
             }
             catch(Exception e)
@@ -108,17 +93,13 @@ namespace DataFlareClient
         {
             try
             {
-                using (var handler = new HttpClientHandler())
+                using (var client = new HttpClient())
                 {
-                    handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                    handler.ServerCertificateCustomValidationCallback = (request, cert, chain, policyErrors) => { return true; };
-                    using (var client = new HttpClient(handler))
-                    {
-                        var result = await client.GetAsync($"{baseUrl}/shortcode/{shortCode}");
-                        var json = await result.Content.ReadAsStringAsync();
-                        return JsonSerializer.Deserialize<Flare>(json);
-                    }
+                    var result = await client.GetAsync($"{baseUrl}/shortcode/{shortCode}");
+                    var json = await result.Content.ReadAsStringAsync();
+                    return JsonSerializer.Deserialize<Flare>(json);
                 }
+                
             }
             catch (Exception e)
             {
