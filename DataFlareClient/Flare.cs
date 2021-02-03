@@ -76,7 +76,7 @@ namespace DataFlareClient
             {
                 using (var client = new HttpClient())
                 {
-                    var result = await client.GetAsync($"{baseUrl}/tag?tag={tag}");
+                    var result = await client.GetAsync($"{baseUrl}/tag/{tag}");
                     var json = await result.Content.ReadAsStringAsync();
                     var flares = JsonSerializer.Deserialize<List<Flare>>(json);
                     return flares;

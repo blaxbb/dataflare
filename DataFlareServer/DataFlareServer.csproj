@@ -6,6 +6,7 @@
     <RootNamespace>DataFlareServer</RootNamespace>
     <UserSecretsId>5eb39da2-0962-4c2d-9a08-4049cbf832c1</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <Version>1.0.7</Version>
   </PropertyGroup>
 
   <ItemGroup>
