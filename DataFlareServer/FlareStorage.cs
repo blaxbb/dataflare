@@ -95,11 +95,11 @@ namespace DataFlareServer
 
         public static void Cleanup()
         {
-            var purgeMinutes = 30;
+            var purgeMinutes = 24 * 60;
 
             foreach(var list in FlareCollection.Values)
             {
-                list.RemoveAll(f => DateTime.Now - f.Created > TimeSpan.FromMinutes(30));
+                list.RemoveAll(f => DateTime.Now - f.Created > TimeSpan.FromMinutes(purgeMinutes));
             }
         }
     }
