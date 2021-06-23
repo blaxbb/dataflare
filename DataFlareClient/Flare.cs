@@ -17,6 +17,14 @@ namespace DataFlareClient
         public string Title { get; set; }
         public string Data { get; set; }
         public DateTime Created { get; set; }
+        private object value = null;
+        public object Value(Type type) {
+            if (value == null)
+            {
+                value = JsonSerializer.Deserialize(Data, type);
+            }
+            return value;
+        }
 
         public Flare()
         {
