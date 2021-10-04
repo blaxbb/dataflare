@@ -33,14 +33,36 @@ namespace DataFlareClient
             }
         }
 
-        static string DataHash(this Flare flare)
+        public static (string data, bool encrypted) TryDecrypt(this Flare flare, AesInfo info)
         {
-            return flare.Data.GetHashCode().ToString();
+            var result = flare.Decrypt(info);
+            return (result ?? flare.Data, result != null);
+        }
+
+        public static (string data, bool encrypted) TryDecrypt(this Flare flare, string key, string iv)
+        {
+            var result = flare.Decrypt(key, iv);
+            return (result ?? flare.Data, result != null);
+        }
+
+        public static (string data, bool encrypted) TryDecrypt(this Flare flare, byte[] key, byte[] iv)
+        {
+            var result = Decrypt(flare, key, iv);
+            return (result ?? flare.Data, result != null);
+        }
+
+
+        static string DataMD5(this Flare flare)
+        {
+            using(var md5 = MD5.Create())
+            {
+                return Convert.ToHexString(md5.ComputeHash(Encoding.UTF8.GetBytes(flare.Data)));
+            }
         }
 
         static string EncryptedHash(this Flare flare, AesInfo info)
         {
-            var hash = flare.DataHash();
+            var hash = flare.DataMD5();
             return Convert.ToHexString(EncryptStringToBytes_Aes(hash, Convert.FromHexString(info.Key), Convert.FromHexString(info.IV)));
         }
 
