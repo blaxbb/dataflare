@@ -7,33 +7,23 @@ using System.Text.Json;
 
 namespace DataFlareClient
 {
-    public class EncryptedFlare : Flare
+    public static class EncryptedFlare
     {
-        public EncryptedFlare() : base()
+        public static string Decrypt(this Flare flare, AesInfo info)
         {
-
+            return flare.Decrypt(info.Key, info.IV);
         }
 
-        public EncryptedFlare(string data) : base(data)
+        public static string Decrypt(this Flare flare, string key, string iv)
         {
-
+            return flare.Decrypt(Convert.FromHexString(key), Convert.FromHexString(iv));
         }
 
-        public string GetData(AesInfo info)
-        {
-            return GetData(info.Key, info.IV);
-        }
-
-        public string GetData(string key, string iv)
-        {
-            return GetData(Convert.FromHexString(key), Convert.FromHexString(iv));
-        }
-
-        public string GetData(byte[] key, byte[] iv)
+        public static string Decrypt(this Flare flare, byte[] key, byte[] iv)
         {
             try
             {
-                var decString = DecryptStringFromBytes_Aes(Convert.FromHexString(this.Data), key, iv);
+                var decString = DecryptStringFromBytes_Aes(Convert.FromHexString(flare.Data), key, iv);
                 return decString;
             }
             catch (Exception ex)
@@ -43,22 +33,44 @@ namespace DataFlareClient
             }
         }
 
-        public static EncryptedFlare Create(string data, AesInfo info)
+        static string DataHash(this Flare flare)
+        {
+            return flare.Data.GetHashCode().ToString();
+        }
+
+        static string EncryptedHash(this Flare flare, AesInfo info)
+        {
+            var hash = flare.DataHash();
+            return Convert.ToHexString(EncryptStringToBytes_Aes(hash, Convert.FromHexString(info.Key), Convert.FromHexString(info.IV)));
+        }
+
+        public static void Sign(this Flare flare, AesInfo info)
+        {
+            var signature = flare.EncryptedHash(info);
+            flare.Signature = signature;
+        }
+
+        public static bool VerifyEncryptedHash(this Flare flare, AesInfo info)
+        {
+            return flare.Signature == flare.EncryptedHash(info);
+        }
+
+        public static Flare Create(string data, AesInfo info)
         {
             return Create(data, info.Key, info.IV);
         }
 
-        public static EncryptedFlare Create(string data, string key, string iv)
+        public static Flare Create(string data, string key, string iv)
         {
             return Create(data, Convert.FromHexString(key), Convert.FromHexString(iv));
         }
 
-        public static EncryptedFlare Create(string data, byte[] key, byte[] iv)
+        public static Flare Create(string data, byte[] key, byte[] iv)
         {
             var encryptedData = EncryptStringToBytes_Aes(data, key, iv);
             var encryptedString = Convert.ToHexString(encryptedData);
 
-            var flare = new EncryptedFlare(encryptedString);
+            var flare = new Flare(encryptedString);
             return flare;
         }
 
