@@ -2,12 +2,12 @@
 
   <PropertyGroup>
 	<LangVersion>latest</LangVersion>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>bbarrett</Authors>
     <PackageProjectUrl>https://github.com/blaxbb/dataflare</PackageProjectUrl>
     <PackageTags>dataflare</PackageTags>
-    <Version>1.1.0</Version>
+    <Version>1.1.2</Version>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
