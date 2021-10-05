@@ -25,8 +25,8 @@ namespace DataFlareClient
 
         public AesInfo(byte[] key, byte[] iv)
         {
-            Key = Convert.ToHexString(key);
-            IV = Convert.ToHexString(iv);
+            Key = ConvertBackports.ToHexString(key);
+            IV = ConvertBackports.ToHexString(iv);
         }
 
         public string Key { get; set; }

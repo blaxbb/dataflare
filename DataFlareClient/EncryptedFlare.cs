@@ -18,7 +18,7 @@ namespace DataFlareClient
 
         static Flare Create(string data, string key, string iv)
         {
-            return Create(data, Convert.FromHexString(key), Convert.FromHexString(iv));
+            return Create(data, ConvertBackports.FromHexString(key), ConvertBackports.FromHexString(iv));
         }
 
         static Flare Create(string data, byte[] key, byte[] iv)
@@ -38,7 +38,7 @@ namespace DataFlareClient
 
         static string Decrypt(this Flare flare, string key, string iv)
         {
-            return flare.Decrypt(Convert.FromHexString(key), Convert.FromHexString(iv));
+            return flare.Decrypt(ConvertBackports.FromHexString(key), ConvertBackports.FromHexString(iv));
         }
 
         static string Decrypt(this Flare flare, byte[] key, byte[] iv)
@@ -91,7 +91,7 @@ namespace DataFlareClient
         {
             using(var md5 = MD5.Create())
             {
-                return Convert.ToHexString(md5.ComputeHash(Encoding.UTF8.GetBytes(flare.Data)));
+                return ConvertBackports.ToHexString(md5.ComputeHash(Encoding.UTF8.GetBytes(flare.Data)));
             }
         }
 
@@ -102,13 +102,13 @@ namespace DataFlareClient
 
         static string EncryptedHash(this Flare flare, string key, string iv)
         {
-            return EncryptedHash(flare, Convert.FromHexString(key), Convert.FromHexString(iv));
+            return EncryptedHash(flare, ConvertBackports.FromHexString(key), ConvertBackports.FromHexString(iv));
         }
 
         static string EncryptedHash(this Flare flare, byte[] key, byte[] iv)
         {
             var hash = flare.DataMD5();
-            return Convert.ToHexString(EncryptStringToBytes_Aes(hash, key, iv));
+            return ConvertBackports.ToHexString(EncryptStringToBytes_Aes(hash, key, iv));
         }
 
         public static void Sign(this Flare flare, AesInfo info)
@@ -118,7 +118,7 @@ namespace DataFlareClient
 
         static void Sign(this Flare flare, string key, string iv)
         {
-            flare.Sign(Convert.FromHexString(key), Convert.FromHexString(iv));
+            flare.Sign(ConvertBackports.FromHexString(key), ConvertBackports.FromHexString(iv));
         }
 
         static void Sign(this Flare flare, byte[] key, byte[] iv)
