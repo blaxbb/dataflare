@@ -57,10 +57,22 @@ namespace DataFlareClient
 
         public static (T data, bool encrypted) TryDecrypt<T>(this Flare flare, AesInfo info)
         {
+            try
+            {
+                if (info == null)
+                {
+                    return ((T)flare.Value(typeof(T)), false);
+                }
+            }
+            catch(Exception ex)
+            {
+                return default;
+            }
+
             var (json, encrypted) = flare.TryDecrypt(info);
             try
             {
-                return(JsonSerializer.Deserialize<T>(json), encrypted);
+                return (JsonSerializer.Deserialize<T>(json), encrypted);
             }
             catch(Exception ex)
             {
@@ -130,6 +142,15 @@ namespace DataFlareClient
 
         public static bool VerifySignature(this Flare flare, AesInfo info)
         {
+            if(info == null)
+            {
+                if (!string.IsNullOrWhiteSpace(flare.Signature))
+                {
+                    return false;
+                }
+                return true;
+            }
+
             return flare.Signature == flare.EncryptedHash(info);
         }
 
