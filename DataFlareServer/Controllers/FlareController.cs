@@ -1,5 +1,7 @@
 ﻿using DataFlareClient;
+using DataFlareServer.Hubs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +15,27 @@ namespace DataFlareServer.Controllers
     [ApiController]
     public class FlareController : ControllerBase
     {
+        IHubContext<FlareHub> hubContext;
+        public FlareController(IHubContext<FlareHub> hubContext)
+        {
+            this.hubContext = hubContext;
+        }
+
         // POST api/<FlareController>
         [HttpPost]
-        public Flare Post(Flare flare)
+        public async Task<Flare> Post(Flare flare)
         {
             if (!FlareStorage.Add(flare))
             {
                 throw new Exception("Failed to add flare to storage.");
+            }
+            try
+            {
+                await hubContext?.Clients?.All?.SendAsync($"flare-{flare.Tag}", flare);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             return flare;
         }

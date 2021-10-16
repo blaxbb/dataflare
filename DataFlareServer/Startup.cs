@@ -1,3 +1,4 @@
+using DataFlareServer.Hubs;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,6 +38,8 @@ namespace DataFlareServer
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DataFlareServer", Version = "v1" });
             });
 
+            services.AddSignalR();
+
             Task.Run(async () =>
             {
                 while (true)
@@ -66,6 +69,7 @@ namespace DataFlareServer
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<FlareHub>("FlareHub");
             });
         }
     }
