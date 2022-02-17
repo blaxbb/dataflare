@@ -102,5 +102,13 @@ namespace DataFlareServer
                 list.RemoveAll(f => DateTime.Now - f.Created > TimeSpan.FromMinutes(purgeMinutes));
             }
         }
+
+        public static IEnumerable<object> Stats()
+        {
+            foreach(var tag in FlareCollection)
+            {
+                yield return new { Tag = tag.Key, Count = tag.Value.Count, Memory = tag.Value.Sum(f => f.Data.Length * sizeof(char)) / (1024 * 1000) };
+            }
+        }
     }
 }

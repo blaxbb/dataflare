@@ -40,6 +40,12 @@ namespace DataFlareServer.Controllers
             return flare;
         }
 
+        [HttpGet("stats")]
+        public IEnumerable<object> Stats()
+        {
+            return FlareStorage.Stats();
+        }
+
 
         // GET: api/<FlareController>/tag
         [HttpGet("tag/{tag}")]
